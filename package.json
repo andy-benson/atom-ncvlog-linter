@@ -1,7 +1,7 @@
 {
   "name": "atom-ncvlog-linter",
   "main": "lib/atom-ncvlog-linter.js",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "repository": "https://github.com/andy-benson/atom-ncvlog-linter",
   "description": "system verilog atom-linter using ncvlog (Cadence Incisive)",
   "keywords": [
