@@ -1,0 +1,6 @@
+.DS_Store
+npm-debug.log
+node_modules
+lib/test.v
+package-lock.json
+INCA_libs
