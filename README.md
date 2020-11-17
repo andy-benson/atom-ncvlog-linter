@@ -1,13 +1,13 @@
 ## ncvlog-linter package
 
 
-SystemVerilog linter forked from :  https://github.com/KoenGoe/atom-vcs-linter)
+SystemVerilog linter using 'ncvlog' (Cadence Incisive) 
 
-Requires 'ncvlog' (Cadence Incisive) to compile the current verilog file. Cadence Incisive , seems to give the most "incisive"  error messages - hence the fork from atom-vcs-linter
-
-Keeping the ncvlog compile to a single file keeps run time super speedy, and therefore the linter can work in-line during editing  ( you might want https://atom.io/packages/autosave-onchange)
+Only compiles the file being linted which keeps run time super speedy, and therefore the linter can work in-line during editing  ( you might want https://atom.io/packages/autosave-onchange)
 
 This downside to this approach, is that project-wide dependencies such as  'include filepaths , and module instantiations may give false positives / false negatives.
+
+forked from :  https://github.com/KoenGoe/atom-vcs-linter)
 
 ### Dependencies :
 
@@ -16,12 +16,15 @@ This downside to this approach, is that project-wide dependencies such as  'incl
 
 ### Under the hood
 
-ncvlog-linter runs the following command line each time the current file is saved ( in this example lint_test.v)
+atom-ncvlog-linter runs the following command line each time the current file is saved (in this example lint_test.v)
 
 ```
-ncvlog -sv +incdir+. -logfile /tmp/logfile lint_test.v
+ncvlog -sv +incdir+. -logfile /tmp/logfile -work worklib lint_test.v
 ```
-
+additional cds.lib file maps worklib :
+```
+DEFINE worklib /tmp/worklib
+```
 
 
 Each of the error messages are then parsed , and reformatted before being passed back to the linter package. I.e. :  
@@ -48,5 +51,7 @@ lint_test.sv:6:Error:expecting a left parenthesis ('(') [12.1.2][7.1(IEEE)].
 ### ToDo
 
 1. Add menu item so that additional command line options can be passed to ncvlog, such as additional files or include directories.
-2. Clean up INCA_libs , harder than first appears ( when run as part of atom package), tricky to delete, tricky to map work dir to alternative location, i.e.  /tmp
-There might be some more atom linter utils that could help with removing temp files. 
+
+### Done 
+1. Clean up INCA_libs => worklib now set as /tmp/worklib
+1. System level alert if ncvlog not found on command line

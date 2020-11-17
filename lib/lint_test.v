@@ -3,7 +3,7 @@ module lint_test();
 
 
    wire woof;
-   wire jjdjjd;
+   wire jjdjjd
 
 
    assign woof             = 1'b1;

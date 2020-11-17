@@ -20,9 +20,7 @@ import subprocess
 
 import os
 import re
-
-
-
+import shutil
 
 args = sys.argv
 filelist=args[1:]
@@ -43,29 +41,27 @@ def process_line(msg_type,line):
     my_line = str(line)
     
     matches = re.search(r"\(([\w\.\/-]+),(\d*)\|\d*\):\s(.+\.$)", my_line)
-
+    
     if (matches):
         file     = str(matches.group(1))
         line_num = str(matches.group(2))
         message  = str(matches.group(3))
-
+    
         return file +":"+ line_num +":"+ msg_type +":"+ message + "\n\n"
     
     # if there no match something has gone wrong with the regex, put error on first line 
     else:    
         return str(filelist[0]) +":0:Error:"+ my_line + "\n\n" 
+
+        
       
 #-----------------------------------------------------------------------------
 # run ncvlog on the current file
 # logfile and worklib are send to /tmp and not required , so easy way of cleanup
 #-----------------------------------------------------------------------------
 
-worklib = "/tmp/worklib"
-if not os.path.exists(worklib):
-    os.makedirs(worklib)
 
-
-ncvlog_output = subprocess.run(["ncvlog", incdir_cmd, "-sv", "-logfile", "/tmp/logfile", "-work", "worklib", str(filelist[0])], capture_output=True,universal_newlines=True)
+ncvlog_output = subprocess.run(["ncvlog", incdir_cmd, "-sv", "-logfile", "/tmp/logfile", str(filelist[0])], capture_output=True,universal_newlines=True)
 
 lines = ncvlog_output.stdout
 
@@ -75,7 +71,6 @@ lines = lines.split("\n")
 
 #-----------------------------------------------------------------------------
 # parse each of the lines looking for the ncvlog info / warning / error codes
-#
 #----------------------------------------------------------------------------
 
 for line in lines:
@@ -92,10 +87,16 @@ for line in lines:
     if line.startswith("ncvlog: *F"):
             out += process_line("Fatal",line)
             
+#-----------------------------------------------------------------------------
+# clean up worklib
+#-----------------------------------------------------------------------------
+
+dir_path = 'INCA_libs'
+if os.path.exists(dir_path):
+    shutil.rmtree(dir_path, ignore_errors=True)
     
 #-----------------------------------------------------------------------------
 # return formatted errors back to calling java script
-#
 #----------------------------------------------------------------------------
 
 print(out)
