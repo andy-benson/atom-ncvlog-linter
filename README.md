@@ -3,7 +3,7 @@
 
 SystemVerilog linter using 'ncvlog' (Cadence Incisive) 
 
-Only compiles the file being linted which keeps run time super speedy, and therefore the linter can work in-line during editing  ( you might want https://atom.io/packages/autosave-onchange)
+Only compiles the file being linted which keeps run time super speedy, and therefore the linter can work in-line during editing  (you might want https://atom.io/packages/autosave-onchange)
 
 This downside to this approach, is that project-wide dependencies such as  'include filepaths , and module instantiations may give false positives / false negatives.
 
@@ -16,14 +16,10 @@ forked from :  https://github.com/KoenGoe/atom-vcs-linter)
 
 ### Under the hood
 
-atom-ncvlog-linter runs the following command line each time the current file is saved (in this example lint_test.v)
+atom-ncvlog-linter runs the following command line each time the current file is saved (i.e. lint_test.v)
 
 ```
-ncvlog -sv +incdir+. -logfile /tmp/logfile -work worklib lint_test.v
-```
-additional cds.lib file maps worklib :
-```
-DEFINE worklib /tmp/worklib
+ncvlog -sv +incdir+. -logfile /tmp/logfile 
 ```
 
 
@@ -53,5 +49,5 @@ lint_test.sv:6:Error:expecting a left parenthesis ('(') [12.1.2][7.1(IEEE)].
 1. Add menu item so that additional command line options can be passed to ncvlog, such as additional files or include directories.
 
 ### Done 
-1. Clean up INCA_libs => worklib now set as /tmp/worklib
+1. Clean up INCA_libs
 1. System level alert if ncvlog not found on command line
