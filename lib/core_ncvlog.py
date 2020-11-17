@@ -22,6 +22,8 @@ import os
 import re
 
 
+
+
 args = sys.argv
 filelist=args[1:]
 filelist[0] = os.path.abspath(filelist[0])
@@ -55,10 +57,15 @@ def process_line(msg_type,line):
       
 #-----------------------------------------------------------------------------
 # run ncvlog on the current file
-#
+# logfile and worklib are send to /tmp and not required , so easy way of cleanup
 #-----------------------------------------------------------------------------
 
-ncvlog_output = subprocess.run(["ncvlog", incdir_cmd, "-sv", "-logfile", "/tmp/logfile",str(filelist[0])], capture_output=True,universal_newlines=True)
+worklib = "/tmp/worklib"
+if not os.path.exists(worklib):
+    os.makedirs(worklib)
+
+
+ncvlog_output = subprocess.run(["ncvlog", incdir_cmd, "-sv", "-logfile", "/tmp/logfile", "-work", "worklib", str(filelist[0])], capture_output=True,universal_newlines=True)
 
 lines = ncvlog_output.stdout
 
@@ -84,6 +91,8 @@ for line in lines:
 
     if line.startswith("ncvlog: *F"):
             out += process_line("Fatal",line)
+            
+    
 #-----------------------------------------------------------------------------
 # return formatted errors back to calling java script
 #
