@@ -3,7 +3,7 @@
 
 SystemVerilog linter using 'ncvlog' (Cadence Incisive) 
 
-Only compiles the file being linted which keeps run time super speedy, and therefore the linter can work in-line during editing  (you might want https://atom.io/packages/autosave-onchange)
+Only compiles the file being linted which keeps run time super speedy, so can work in-line during editing  (you might want https://atom.io/packages/autosave-onchange)
 
 This downside to this approach, is that project-wide dependencies such as  'include filepaths , and module instantiations may give false positives / false negatives.
 
@@ -19,9 +19,8 @@ forked from :  https://github.com/KoenGoe/atom-vcs-linter)
 atom-ncvlog-linter runs the following command line each time the current file is saved (i.e. lint_test.v)
 
 ```
-ncvlog -sv +incdir+. -logfile /tmp/logfile 
+ncvlog -sv +incdir+. -logfile /tmp/logfile lint_test.v
 ```
-
 
 Each of the error messages are then parsed , and reformatted before being passed back to the linter package. I.e. :  
 
@@ -46,6 +45,7 @@ lint_test.sv:6:Error:expecting a left parenthesis ('(') [12.1.2][7.1(IEEE)].
 
 ### ToDo
 
+1. refactor to be single coffee.init file, simplier solution and will clean up temp file issue. i.e. fork from https://atom.io/packages/linter-verilator
 1. Add menu item so that additional command line options can be passed to ncvlog, such as additional files or include directories.
 
 ### Done 

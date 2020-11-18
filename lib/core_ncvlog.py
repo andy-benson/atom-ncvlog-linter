@@ -9,7 +9,7 @@
 #
 # Example Output to providelinter:
 #
-#  /home/abenson/.atom/packages/atom-ncvlog-linter/lib/lint_test.sv:21:Error:expecting a comma [3.2.1][6.1(IEEE)].
+# lint_test.sv:21:Error:expecting a comma [3.2.1][6.1(IEEE)].
 #
 #-----------------------------------------------------------------------------
 
@@ -21,6 +21,8 @@ import subprocess
 import os
 import re
 import shutil
+import glob
+
 
 args = sys.argv
 filelist=args[1:]
@@ -53,28 +55,29 @@ def process_line(msg_type,line):
     else:    
         return str(filelist[0]) +":0:Error:"+ my_line + "\n\n" 
 
-        
-      
+
+
 #-----------------------------------------------------------------------------
 # run ncvlog on the current file
 # logfile and worklib are send to /tmp and not required , so easy way of cleanup
 #-----------------------------------------------------------------------------
 
+ncvlog_output = subprocess.Popen(["ncvlog", incdir_cmd, "-sv", "-logfile", "/tmp/logfile", (filelist[0])], stdout=subprocess.PIPE, universal_newlines=True)
 
-ncvlog_output = subprocess.run(["ncvlog", incdir_cmd, "-sv", "-logfile", "/tmp/logfile", str(filelist[0])], capture_output=True,universal_newlines=True)
 
-lines = ncvlog_output.stdout
+tmp = ncvlog_output.communicate()
 
+
+lines = tmp[0]
 lines = lines.split("\n")
 
-#print (lines) 
 
 #-----------------------------------------------------------------------------
 # parse each of the lines looking for the ncvlog info / warning / error codes
 #----------------------------------------------------------------------------
 
 for line in lines:
-
+    #print(line)
     if line.startswith("ncvlog: *E"):
             out += process_line("Error",line)
 
@@ -88,12 +91,24 @@ for line in lines:
             out += process_line("Fatal",line)
             
 #-----------------------------------------------------------------------------
-# clean up worklib
+# clean up temp files
+# still got a weird issue of race condition *only* when this file is executed from 
+# atom-ncvlog-linter. Deleting INCA_libs can cause an error with ncvlog and 
+# it creates an err file.
+# This is really weird as the subprocess.run should wait before continuing
+# with the program execution ( i.e. deletion of the library)
+# No problems when execute core_ncvlog.py directly.. 
 #-----------------------------------------------------------------------------
 
 dir_path = 'INCA_libs'
 if os.path.exists(dir_path):
     shutil.rmtree(dir_path, ignore_errors=True)
+
+
+err_files= glob.glob("*.err")
+for err_file in err_files:
+    os.remove(err_file)
+
     
 #-----------------------------------------------------------------------------
 # return formatted errors back to calling java script
@@ -101,4 +116,4 @@ if os.path.exists(dir_path):
 
 print(out)
 
-exit(0)
+#exit(0)
