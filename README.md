@@ -45,7 +45,7 @@ lint_test.sv:6:Error:expecting a left parenthesis ('(') [12.1.2][7.1(IEEE)].
 
 ### ToDo
 
-1. refactor to be single coffee.init file, simplier solution and will clean up temp file issue. i.e. fork from https://atom.io/packages/linter-verilator
+1. refactor to be single "init.coffee file, simplier solution and will clean up temp file issue. i.e. fork from https://atom.io/packages/linter-verilator
 1. Add menu item so that additional command line options can be passed to ncvlog, such as additional files or include directories.
 
 ### Done 
